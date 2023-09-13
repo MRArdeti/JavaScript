@@ -1,106 +1,158 @@
-// Primer Pre-Entrega
-/* function descripcionCompra(pelicula, cantidad, precio){
-    return "Pelicula: " + pelicula + " Cantidad de tickets: " + cantidad + " Total: " + precio;
+class Producto{
+    constructor(id, nombre, descripcion, precio, cantidad) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.cantidad = cantidad
+    }
+
+    aumentarCantidad(){
+        this.cantidad++
+    }
+
+    disminuirCantidad(){
+        this.cantidad--
+    }
 }
 
-let detalleCompra = "";
-let total = 0;
-let rta = "";
-
-while(rta !== "-") {
-
-    let pelicula = prompt("¿Qué pelicula desea ver?" + "\n" + "Barbie." + " " + "Ticket $1300 cada uno. Función 14:00 hs." + "\n" + "Rápidos y furiosos." + " " + "Ticket $1500 cada uno. Función 21:00 hs." + "\n" + "Elementos." + " " + "Ticket $1100 cada uno. Función 17:00 hs." + "\n" + "La noche del demonio." + " " + "Ticket $1500 cada uno. Función 23:00 hs.")
-    let cantidad = Number(prompt("Ingrese la cantidad de entradas que desea comprar"));
-
-    if(pelicula == "Barbie") {
-        precio = 1300 * cantidad;
-    }
-    else if(pelicula == "Rápidos y furiosos") {
-        precio = 1500 * cantidad;
-    }
-    else if(pelicula == "Elementos") {
-        precio = 1100 * cantidad;
-    }
-    else if(pelicula == "La noche del demonio") {
-        precio = 1500 * cantidad;
-    }
-    else {
-        alert("Ingresó mal el nombre de la película");
+class ProductoController{
+    constructor(){
+        this.listaProductos = []
     }
 
-    total= total + precio;
-    detalleCompra = detalleCompra + descripcionCompra(pelicula,cantidad,precio)
-    alert(detalleCompra)
+    agregar(producto){
+        this.listaProductos.push(producto)
+    }
+
+    mostrar(){
+        let contenedorProducto = document.getElementById("contenedorProducto")
+        this.listaProductos.forEach(producto => {
+            contenedorProducto.innerHTML += `
+            <div class="card text-center mb-3" style="width: 18rem;">
+            <div class="card-body">
+            <h5 class="card-title">${producto.nombre}</h5>
+            <p class="card-text">${producto.descripcion}</p>
+            <p class="card-text">$${producto.precio}</p>
+            <button class="btn btn-primary" id="ap-${producto.id}">Añadir al carrito</button>
+          </div>
+        </div> `
+        })
+
+        this.listaProductos.forEach(producto => {
+            const ap = document.getElementById(`ap-${producto.id}`)
+
+            ap.addEventListener("click", ()=>{
+                carrito.agregar(producto)
+                carrito.guardarEnStorage()
+                carrito.mostrar()
+            })
+        }) 
+    }
+}    
+
+class Carrito{
+    constructor(){
+        this.listaCarrito = []
+    }
+
+    agregar(producto){
+        this.listaCarrito.push(producto)
+    }
+
+    guardarEnStorage(){
+        let listaCarritoJSON = JSON.stringify(this.listaCarrito)
+        localStorage.setItem("listaCarrito", listaCarritoJSON)
+    }
+
+    recuperarStorage() {
+        let listaCarritoJSON = localStorage.getItem("listaCarrito");
     
-    rta = prompt("Ingrese `-` para salir. O hace click en `Aceptar` para continuar comprando")
-}
+        if (listaCarritoJSON) { // Verificar si listaCarritoJSON no es null
+            let listaCarritoJS = JSON.parse(listaCarritoJSON);
+            let listaAux = [];
+    
+            listaCarritoJS.forEach(producto => {
+                let nuevoProducto = new Producto(producto.id, producto.nombre, producto.descripcion, producto.precio, producto.cantidad);
+                listaAux.push(nuevoProducto);
+            });
+    
+            this.listaCarrito = listaAux;
+        }
+    }    
 
-alert(detalleCompra + "\n" + "El total de la compra es de:" + total);
-
-*/ 
-
-// Segunda Pre-Entrega
-class Producto {
-
-    constructor(nombre, precio) {
-      this.nombre = nombre;
-      this.precio = precio;
-    }
-  }
-
-  let Pochoclos = new Producto("Pochoclos",1000);
-  let Gaseosa = new Producto("Gaseosa", 600);
-  let PapasFritas = new Producto("Papas fritas", 800);
-  let Galletitas = new Producto("Galletitas", 500);
-  let Alfajor = new Producto("Alfajor", 400);
-
-  let ListaProd = [Pochoclos, Gaseosa, PapasFritas, Galletitas, Alfajor];
-  let listaNombres = [];
-
-
-  for (const prod of ListaProd) {
-    listaNombres.push(prod.nombre);
-  }
-
-let total = 0;
-let rta = "";
-let detalleCompra = "";
-
-while(rta !== "-") {
-
-    let UsuarioProd = prompt("¿Qué producto desea comprar?" + "\n" + listaNombres.join(","))
-    let subTotal = 0;
-    let cantidad = 0;
-
-    const mProd = ListaProd.find(function(producto){
-        return producto.nombre == UsuarioProd
-    }) 
-    //si encuentra el producto
-    if(mProd){
-        alert("Producto en stock"+ " " + mProd.nombre)
-        cantidad = Number(prompt("Ingrese la cantidad que desea comprar"));
-        //calcula el sub total dependiendo la cantidad q llevara
-        subTotal = mProd.precio * cantidad;
-        //Detalla la compra
-        detalleCompra += mProd.nombre + " x "  + cantidad + "\n";
-        //Suma el total global
-        total= total + subTotal;
-       
-    }else{
-        //No se encontro el producto
-        alert("el producto no se encuentra")
+    mostrar(){
+        let contenedorCarrito = document.getElementById("contenedorCarrito")
+        contenedorCarrito.innerHTML = ""
+        this.listaCarrito.forEach(producto => {
+            contenedorCarrito.innerHTML += `
+            <div class="card border-success mb-3" style="max-width: 18rem;">
+                <div class="card-header">Charla</div>
+                <div class="card-body text-success">
+                <h5 class="card-title">${producto.nombre}</h5>
+                <p class="card-text">$${producto.precio}</p>
+                </div>
+          </div> `
+        })
+        this.eventoEliminar()
+        this.eventoAumentarCantidad()
+        this.eventoDisminuirCantidad()
     }
 
-  
-    rta = prompt("Ingrese `-` para salir. O hace click en `Aceptar` para continuar comprando")
+    eventoEliminar(){
+        this.listaCarrito.forEach(producto => {
+            const ap_eliminar = document.getElementById(`ep-${producto.id}`)
+            ap_eliminar.addEventListener("click", ()=>{
+                this.eliminar(producto)
+                this.guardarEnStorage()
+                this.mostrar()
+            })
+        })
+    }
+
+    eventoAumentarCantidad(){
+        this.listaCarrito.forEach(producto => {
+            const ap_aumentar = document.getElementById(`aumentar-${producto.id}`)
+            ap_aumentar.addEventListener("click", ()=>{
+                producto.aumentarCantidad()
+                this.mostrar()
+            })
+        })
+    }
+
+    eventoDisminuirCantidad(){
+        this.listaCarrito.forEach(producto => {
+            const ap_disminuir = document.getElementById(`disminuir-${producto.id}`)
+            ap_disminuir.addEventListener("click", ()=>{
+                producto.disminuirCantidad()
+                this.mostrar()
+            })
+        })
+    }
+
+    calcularTotal(){
+        return this.listaCarrito.reduce((acumulador,producto)=> acumulador + producto.precio * producto.cantidad ,0)
+    }
+    mostrarTotal(){
+        const precio_total = document.getElementById("precio_total")
+        precio_total.innerText = `Precio Total: $${this.calcularTotal()}`
+    }
 }
+const ContP = new ProductoController()
+const carrito = new Carrito()
 
-alert(detalleCompra + "\n" + "El total de la compra es de: " + total);
+carrito.recuperarStorage()
 
+const ProdUno = new Producto(1, "Charla de Nutrición Deportiva", "Martes 8/11, duración de 4 horas con un break de 20 minutos. Se otorgs certificado.Cupos limitados", 6000)
+const ProdDos = new Producto(2, "Alergia al gluten", "Viernes 21/10 de 16:00 a 20:00 y Sábado 22/10 de 10:00 a 13:00. Se otorga certificado. Cupos limitados", 8000)
+const ProdTres = new Producto(3, "Intolerancia a la lactosa", "Jueves 20/10 de 17:00 a 19:00. Se otorga certificado. Cupos limitados", 4000)
 
+ContP.agregar(ProdUno)
+ContP.agregar(ProdDos)
+ContP.agregar(ProdTres)
 
-
-
+ContP.mostrar();
+carrito.mostrar();
 
 
 
