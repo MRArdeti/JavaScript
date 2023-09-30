@@ -1,0 +1,24 @@
+{
+    "charlas":[
+        {
+            "id":1,
+            "nombre" : "Charla de Nutrición Deportiva",
+            "descripcion":"Martes 8/11, duración de 4 horas con un break de 20 minutos. Se otorgs certificado.Cupos limitados",
+            "precio" : 6000
+        },
+        {
+            "id":2,
+            "nombre" : "Alergia al gluten",
+            "descripcion":"Viernes 21/10 de 16:00 a 20:00 y Sábado 22/10 de 10:00 a 13:00. Se otorga certificado. Cupos limitados",
+            "precio" : 8000
+        },
+        {
+            "id":3,
+            "nombre" : "Intolerancia a la lactosa",
+            "descripcion":"Jueves 20/10 de 17:00 a 19:00. Se otorga certificado. Cupos limitados",
+            "precio" : 4000
+        }
+       
+    ]
+}
+

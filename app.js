@@ -27,6 +27,7 @@ class ProductoController{
 
     mostrar(){
         let contenedorProducto = document.getElementById("contenedorProducto")
+        console.log(this.listaProductos)
         this.listaProductos.forEach(producto => {
             contenedorProducto.innerHTML += `
             <div class="card text-center mb-3" style="width: 18rem;">
@@ -137,22 +138,61 @@ class Carrito{
         const precio_total = document.getElementById("precio_total")
         precio_total.innerText = `Precio Total: $${this.calcularTotal()}`
     }
+
+    eventoFinalizarCompra(){
+        const finalizar_compra = document.getElementById("finalizar_compra")
+        finalizar_compra.addEventListener("click", ()=> {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: '¡Compra realizada con éxito!',
+                timer: 2000
+            })
+        })
+    }
 }
+
+class Charla {
+    constructor(id, nombre, descripcion, precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+    }
+}
+
 const ContP = new ProductoController()
 const carrito = new Carrito()
 
-carrito.recuperarStorage()
+// Realizar la solicitud Fetch para cargar el archivo JSON de charlas
+fetch('../charlas.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('La solicitud de archivo JSON falló');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Parsear los datos JSON y crear un array de objetos "charla"
+        const charlas = data.charlas.map(charla => {
+            let prod = new Producto(charla.id,charla.nombre,charla.descripcion,charla.precio, 1);
+            ContP.agregar(prod);
+            return prod;
+        });
 
-const ProdUno = new Producto(1, "Charla de Nutrición Deportiva", "Martes 8/11, duración de 4 horas con un break de 20 minutos. Se otorgs certificado.Cupos limitados", 6000)
-const ProdDos = new Producto(2, "Alergia al gluten", "Viernes 21/10 de 16:00 a 20:00 y Sábado 22/10 de 10:00 a 13:00. Se otorga certificado. Cupos limitados", 8000)
-const ProdTres = new Producto(3, "Intolerancia a la lactosa", "Jueves 20/10 de 17:00 a 19:00. Se otorga certificado. Cupos limitados", 4000)
+        // Ahora, 'charlas' contiene un array de objetos de la clase "Charla"
+        carrito.recuperarStorage()
 
-ContP.agregar(ProdUno)
-ContP.agregar(ProdDos)
-ContP.agregar(ProdTres)
+        ContP.mostrar();
+        carrito.mostrar();
+    })
+    .catch(error => {
+        console.error('Error al cargar el archivo JSON:', error);
+    });
 
-ContP.mostrar();
-carrito.mostrar();
+
+
+
 
 
 
