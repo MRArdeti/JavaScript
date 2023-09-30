@@ -66,6 +66,14 @@ class Carrito{
         localStorage.setItem("listaCarrito", listaCarritoJSON)
     }
 
+    
+    limpiarCarrito(){
+        this.listaCarrito = [];
+    }
+    limpiarStorage(){
+        localStorage.setItem("listaCarrito","");
+    }
+
     recuperarStorage() {
         let listaCarritoJSON = localStorage.getItem("listaCarrito");
     
@@ -139,17 +147,26 @@ class Carrito{
         precio_total.innerText = `Precio Total: $${this.calcularTotal()}`
     }
 
-    eventoFinalizarCompra(){
-        const finalizar_compra = document.getElementById("finalizar_compra")
-        finalizar_compra.addEventListener("click", ()=> {
+    eventoFinalizarCompra() {
+        const finalizar_compra = document.getElementById("btn-end-shoop"); // Cambia el ID al correcto
+        finalizar_compra.addEventListener("click", () => {
+            
+
+            this.limpiarStorage();
+            this.limpiarCarrito();
+            this.mostrar();
+
+            // Muestra el mensaje de compra exitosa usando SweetAlert2
             Swal.fire({
                 position: 'center',
                 icon: 'success',
                 title: '¡Compra realizada con éxito!',
                 timer: 2000
-            })
-        })
+            });
+        });
     }
+
+
 }
 
 class Charla {
@@ -163,6 +180,7 @@ class Charla {
 
 const ContP = new ProductoController()
 const carrito = new Carrito()
+carrito.eventoFinalizarCompra();
 
 // Realizar la solicitud Fetch para cargar el archivo JSON de charlas
 fetch('../charlas.json')
